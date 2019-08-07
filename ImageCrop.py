@@ -1,5 +1,5 @@
 """
-This script is a tool to crap images with known bbox. 
+This script is a tool to crop images with known bbox. 
 It's for Tensorflow classification 
 
 Ref: https://www.geeksforgeeks.org/working-images-python/
@@ -10,7 +10,7 @@ Ref: https://stackoverflow.com/questions/12517451/automatically-creating-directo
 
 
 Usage: (For Windows)
-python ImageCrop.py --input images --output .\test
+python ImageCrop.py --input images --output test
 
 """
 import os
@@ -18,17 +18,13 @@ import argparse
 import csv
 from PIL import Image
 
-def lines_that_contain(string, fp):
-    for line in fp:
-        if string in line:
-            return line
-    #return [line for line in fp if string in line]
 
 def Get_4_numbers(string, fp):
     for line in fp:
         if string in line:
             FourNumbers=line.split(' ')
-            return FourNumbers[2],FourNumbers[3],FourNumbers[4],FourNumbers[5]
+            #return x,y,w,h so, we need x,y,w+x,h+y for crop
+            return float(FourNumbers[2]),float(FourNumbers[3]),float(FourNumbers[4])+float(FourNumbers[2]),float(FourNumbers[5])+float(FourNumbers[3])
 
 
 
@@ -58,40 +54,22 @@ def main():
     #I will update this to [] later
     with open(indexfile) as f1,open(bboxfile) as f2,open("out.txt","w") as f3:
         for x,y in zip(f1,f2):
-            #f3.write(x.strip()+" "+y.strip()+'\n')
             locations=y.split(' ')
             f3.write(x.strip()+" "+locations[1]+" "+locations[2]+" "+locations[3]+" "+locations[4]+'\n')
     f3.close()
     
+    #I know it's stupid. update later.. actually we dont need f3.
     lineList = [line.rstrip('\n') for line in open("out.txt")]
-    #print(lineList)
-    #with open("out.txt") as fp:
-    #name = "Common_Yellowthroat_0070_190678.jpg"
-    #    print(name)
-    #ALine = lines_that_contain(name,lineList)
-    #print(ALine)
     
     for path, subdirs,files in os.walk(args.input):
         for name in files:
-            #print(name) name is only file name, no path included.
-            #TEST=name[:2]
-            #print(TEST)
-            #Let's put eveything together!--> for os.remove()
             FilePath=os.path.join(os.getcwd(), path, name)
             #print(FilePath)
             print(name)
-            #ALine = lines_that_contain(name, lineList)
-            #print(ALine)
             a,b,c,d = Get_4_numbers(name, lineList)
-            a=float(a)
-            b=float(b)
-            c=float(c)+float(a)
-            d=float(d)+float(b)
             
             #print(a,b,c,d)
-            savefileto=args.output+"\\"+path+"\\"+name
-            #name2="_c_"+name
-            #savefileto=os.path.join(os.getcwd(), path, name2)
+            savefileto=".\\"+args.output+"\\"+path+"\\"+name
             #print("filesaveto:{}".format(savefileto))
 
             img = Image.open(FilePath) 
@@ -112,18 +90,6 @@ def main():
             img.save(savefileto)  
             
 
-        #if name[:2] == '._':
-        #  os.remove(FilePath)
-        #  print("Deleted!")
-
-"""
-    for x in range(int(SelectNumber)):
-        files = os.listdir(args.input)
-        index = random.randrange(0,len(files))
-        src = args.input + files[index]
-        dst = args.output + files[index]
-        copyfile(src,dst)
-"""
 
 if __name__ == '__main__':
     main()
