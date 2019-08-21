@@ -21,7 +21,7 @@ You will have all cropped dataset basded on bounding_boxes.txt in folder .\test
 
 
 
-Citation
+Reference
 
 Wah C., Branson S., Welinder P., Perona P., Belongie S. “The Caltech-UCSD Birds-200-2011 Dataset.” Computation & Neural Systems Technical Report, CNS-TR-2011-001. download pdf[http://www.vision.caltech.edu/visipedia/papers/CUB_200_2011.pdf]
 
